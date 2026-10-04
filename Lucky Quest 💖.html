@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="th"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>Lucky Quest 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--p:#ff8fc2;--v:#b79cff;--c:#fff4e0;--d:#5a3d7a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+html,body{margin:0;height:100%;background:#2e1f4a;font-family:Mali,'Noto Sans Thai',sans-serif;color:var(--d);overflow:hidden}
+#app{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+#box{position:relative;width:min(100%,calc((100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom))*16/9));aspect-ratio:16/9;container-type:inline-size;font-size:2.3cqw;overflow:hidden;border-radius:1.5cqw;box-shadow:0 0 0 .5cqw #ff8fc2,0 0 4cqw #b79cff}
+canvas{width:100%;height:100%;display:block;image-rendering:pixelated;background:#bfe6ff}
+.scr{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(160deg,#ffd6ea,#e3d4ff 60%,#fff4e0);padding:2cqw;z-index:5}
+.scr.on{display:flex}
+h1{margin:0;font-size:5.2cqw;color:#ff5fa8;text-shadow:.3cqw .3cqw 0 #fff,.6cqw .6cqw 0 #b79cff;letter-spacing:.1cqw}
+p{margin:1cqw 0;font-weight:500}
+.btn{font:inherit;font-weight:700;font-size:2.4cqw;color:#fff;background:linear-gradient(#ff9fcc,#ff5fa8);border:0;border-bottom:.5cqw solid #c93a85;border-radius:1.4cqw;padding:1cqw 4cqw;margin:.8cqw;cursor:pointer}
+.btn:active{transform:translateY(.4cqw);border-bottom-width:.1cqw}
+.btn.alt{background:linear-gradient(#cbb8ff,#9a7cf5);border-bottom-color:#6b4fc4}
+#hud{position:absolute;top:1cqw;left:1.2cqw;right:1.2cqw;display:none;justify-content:space-between;align-items:center;font-weight:700;color:#fff;text-shadow:.2cqw .2cqw 0 #5a3d7a;font-size:2.1cqw;pointer-events:none;z-index:3}
+#hud.on{display:flex}
+#hud span{background:#5a3d7acc;padding:.4cqw 1.4cqw;border-radius:1cqw}
+#snd{pointer-events:auto;cursor:pointer;background:#5a3d7acc;border:0;color:#fff;font-size:2.1cqw;border-radius:1cqw;padding:.4cqw 1.2cqw}
+#ctl{position:absolute;bottom:1.5cqw;left:2cqw;right:2cqw;display:none;justify-content:space-between;z-index:3;pointer-events:none}
+#ctl.on{display:flex}
+#ctl div{display:flex;gap:1.5cqw}
+.cb{pointer-events:auto;width:9cqw;height:9cqw;border-radius:50%;border:.4cqw solid #fff;background:#b79cffaa;color:#fff;font-size:4cqw;display:flex;align-items:center;justify-content:center;font-weight:700}
+.cb.on{background:#ff5fa8cc}
+#quiz{background:#3b2a5ccc}
+.card{background:var(--c);border:.5cqw solid var(--p);border-radius:2cqw;padding:2cqw 3cqw;width:88%;box-shadow:.6cqw .6cqw 0 var(--v)}
+.q{font-size:2.5cqw;font-weight:700;margin-bottom:1.2cqw;line-height:1.35}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:1cqw}
+.opt{font:inherit;font-size:2cqw;font-weight:500;color:var(--d);background:#fff;border:.35cqw solid var(--v);border-radius:1.2cqw;padding:1cqw;cursor:pointer;line-height:1.3}
+.opt:active{background:#f3e9ff}
+.opt.bad{background:#ffd3d3;border-color:#ff6b6b;animation:sh .35s}
+.opt.good{background:#c8f7c5;border-color:#4cc36b}
+@keyframes sh{25%{transform:translateX(-.8cqw)}75%{transform:translateX(.8cqw)}}
+#msg{min-height:3cqw;font-size:2.2cqw;font-weight:700;margin-top:1cqw}
+#grid{display:grid;grid-template-columns:repeat(3,16cqw);gap:2cqw;margin:1.5cqw 0;perspective:100cqw}
+.tk{height:15cqw;position:relative;transform-style:preserve-3d;transition:transform .8s;cursor:pointer}
+.tk.f{transform:rotateY(180deg)}
+.tk.dim{opacity:.6}
+.tk div{position:absolute;inset:0;backface-visibility:hidden;border-radius:1.5cqw;display:flex;align-items:center;justify-content:center;font-weight:700;border:.4cqw solid #fff;box-shadow:.4cqw .4cqw 0 #8a6bd6}
+.tk .fr{background:repeating-linear-gradient(45deg,#ff8fc2,#ff8fc2 1.2cqw,#ffb6d9 1.2cqw,#ffb6d9 2.4cqw);font-size:5cqw;color:#fff}
+.tk .bk{background:linear-gradient(#fff6c9,#ffd45e);transform:rotateY(180deg);font-size:3.4cqw;color:#b4531b;flex-direction:column;line-height:1.1}
+.tk .bk small{font-size:1.8cqw}
+#big{font-size:9cqw;color:#ff5fa8;font-weight:700;text-shadow:.4cqw .4cqw 0 #fff,.8cqw .8cqw 0 #b79cff;margin:0}
+.fall{position:absolute;top:-6cqw;font-size:3cqw;animation:fl linear forwards;pointer-events:none}
+@keyframes fl{to{transform:translateY(60cqw) rotate(360deg)}}
+#pk{display:flex;gap:2cqw;margin:1.2cqw 0}
+.pick{background:#fff;border:.4cqw solid var(--v);border-radius:1.5cqw;padding:1cqw 2cqw;font-weight:700;font-size:2cqw;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.pick.on{border-color:#ff5fa8;background:#ffe3f1;box-shadow:0 0 0 .4cqw #ffb6d9;transform:scale(1.06)}
+.pv{width:11cqw;height:13.2cqw;image-rendering:pixelated}
+#nm{font:inherit;font-size:2.4cqw;text-align:center;border:.4cqw solid var(--v);border-radius:1.2cqw;padding:.8cqw 2cqw;width:30cqw;color:var(--d);margin:.8cqw;user-select:text;-webkit-user-select:text}
+#rot{display:none;position:fixed;top:0;left:0;right:0;text-align:center;background:#ff5fa8;color:#fff;font-size:14px;padding:6px;z-index:9}
+@media (orientation:portrait){#rot{display:block}}
+</style></head><body>
+<div id="rot">📱 หมุนจอเป็นแนวนอนจะเล่นง่ายกว่านะ</div>
+<div id="app"><div id="box">
+<canvas id="cv"></canvas>
+<div id="hud"><span id="hl">ด่าน 1/6</span><span id="hs">⭐ 0/60</span><span id="hc">🪙 0</span><button id="snd">🔊</button></div>
+<div id="ctl"><div><button class="cb" id="bl">◀</button><button class="cb" id="br">▶</button></div><div><button class="cb" id="bj">⤒</button></div></div>
+
+<div class="scr on" id="s0">
+<h1>Lucky Quest 💖</h1>
+<p style="font-size:2.3cqw">ผจญภัยผ่าน 6 ด่าน ตอบคำถามความทรงจำของเรา<br>ให้ถูกทุกข้อ แล้วไปเปิดฉลากรับรางวัล 🎁</p>
+<p style="font-size:1.8cqw">⌨️ ลูกศร/A D เดิน • Space กระโดด &nbsp; 📱 ใช้ปุ่มบนจอ</p>
+<div><button class="btn" id="go">▶ เริ่มเล่น</button><button class="btn alt" id="snd2">🔊 เสียง: เปิด</button></div>
+</div>
+
+<div class="scr" id="sel">
+<h1 style="font-size:4cqw">เลือกตัวละคร ✨</h1>
+<div id="pk"><div class="pick on" data-i="0"><canvas class="pv" width="40" height="48"></canvas>สาวน้อย</div><div class="pick" data-i="1"><canvas class="pv" width="40" height="48"></canvas>หนุ่มน้อย</div><div class="pick" data-i="2"><canvas class="pv" width="40" height="48"></canvas>น้องหมา</div></div>
+<input id="nm" maxlength="12" placeholder="ตั้งชื่อตัวละคร" autocomplete="off">
+<button class="btn" id="gs">🚀 ลุยเลย!</button>
+</div>
+
+<div class="scr" id="quiz"><div class="card"><div class="q" id="qt"></div><div class="opts" id="qo"></div><div id="msg"></div></div></div>
+
+<div class="scr" id="lot">
+<h1 style="font-size:4cqw">🎁 เลือกฉลากรางวัล!</h1>
+<p id="lp">ผ่านครบ 6 ด่าน คะแนนเต็ม 60! เลือก 1 ใบเลย</p>
+<div id="grid"></div>
+</div>
+
+<div class="scr" id="win">
+<h1 id="wh">ยินดีด้วย! 🎉</h1>
+<p style="font-size:2.4cqw">ตอบถูกครบ 60/60 คะแนน</p>
+<p>คุณได้รับรางวัล</p>
+<p id="big">0 บาท</p>
+<button class="btn" id="again">↺ เล่นใหม่</button>
+</div>
+</div></div>
+
+<script>
+const $=s=>document.querySelector(s),cv=$('#cv'),g=cv.getContext('2d');cv.width=800;cv.height=450;
+let snd=true,AC;
+function beep(f,d=.1,t='square',v=.05,s=0){if(!snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),a=AC.createGain(),n=AC.currentTime;o.type=t;o.frequency.setValueAtTime(f,n);if(s)o.frequency.exponentialRampToValueAtTime(s,n+d);a.gain.setValueAtTime(v,n);a.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(a);a.connect(AC.destination);o.start();o.stop(n+d)}catch(e){}}
+const seq=(a,t='square')=>a.forEach((f,i)=>setTimeout(()=>beep(f,.15,t,.05),i*110));
+function setSnd(){$('#snd').textContent=snd?'🔊':'🔇';$('#snd2').textContent='🔊 เสียง: '+(snd?'เปิด':'ปิด')}
+$('#snd').onclick=$('#snd2').onclick=()=>{snd=!snd;setSnd();beep(660)};
+
+const G=(x,w)=>[x,400,w,50],B=(x,y,w=96)=>[x,y,w,16];
+const LV=[
+{W:1600,sky:['#bfe6ff','#ffe0f0'],P:[G(0,700),G(790,810),B(300,330),B(500,262)],C:[[340,290],[540,222],[880,360],[980,360],[1080,360],[1200,360]],D:1500},
+{W:1800,sky:['#ffd6ea','#e9dcff'],P:[G(0,500),G(590,420),G(1100,700),B(220,330),B(380,262),B(700,320),B(850,250)],C:[[260,290],[420,222],[740,280],[890,210],[1180,360],[1300,360]],D:1700},
+{W:1900,sky:['#e3d4ff','#fff0d9'],P:[G(0,380),B(470,340,80),B(620,280,80),B(770,340,80),B(920,280,80),B(1070,340,80),G(1200,700)],C:[[500,300],[650,240],[800,300],[950,240],[1100,300],[1400,360]],D:1800},
+{W:2100,sky:['#ffd0e3','#d9e9ff'],P:[G(0,450),G(540,280),G(920,260),G(1290,810),B(680,300),B(1070,310),B(1200,250,80),B(1500,300),B(1650,240)],C:[[300,360],[720,260],[1100,270],[1230,210],[1540,260],[1690,200]],D:2000},
+{W:2100,sky:['#d6f0ff','#ffd9f2'],P:[G(0,300),B(390,340,80),B(510,280,80),B(630,220,80),B(750,280,80),B(870,340,80),G(990,1110),B(1300,300),B(1500,240)],C:[[410,300],[530,240],[650,180],[770,240],[890,300],[1330,260],[1530,200]],D:2000},
+{W:2400,sky:['#ffc9e1','#cbb8ff'],P:[G(0,360),B(450,330,80),B(590,270,80),G(730,180),B(980,330,80),B(1120,270,80),B(1260,210,80),B(1400,270,80),B(1540,330,80),G(1700,700),B(1850,300)],C:[[470,290],[610,230],[800,360],[1000,290],[1140,230],[1280,170],[1420,230],[1870,260]],D:2300}];
+
+const QS=[
+["เรานัดเจอกันครั้งแรกที่ไหน?",["หน้า Uniquo","เซนทรัลขอนแก่น","แคมปัส","ห้องเค้า"],0],
+["เพลงโปรดเค้าตอนร้องคาราโอเกะ?",["ฝันถึงแฟนเก่า","สลักจิต","ขอวอน","อมพระมาพูด"],2],
+["เราสั่งป๊อปคอร์นรสชาติอะไรกัน?",["เค็ม หวาน","หวาน ทรัฟเฟิล","ช็อกโกแลต","ทรัฟเฟิล เค็ม"],3],
+["เธอจะไม่เป่าพุงเค้าอีกแล้วใช่มั้ย?",["ไม่","ใช่ เค้าจะไม่เป่าแล้ว","ไม่สนจะเป่า","จะเป่าทั้งวัน"],1],
+["“ไม่มีใครรู้ตัวเราผ่านอะไรมา รอยยิ้มที่เห็นมันแค่หน้ากากธรรมดา ประโยคที่ว่า ตัวเราผ่านอะไรมา คำว่าเรา หมายถึงใคร”",["เธอ","เค้า","พี่ป๊อปสยาม","เนเน่ นายแน่มาก","เค้าก็ไม่รู้"],4],
+["เค้าสวยมั้ย?",["ไม่อะเฉย ๆ","สวย","สวยมาก","โคตรสวย ที่สุดในโลกแฟนเค้าดีที่สุดสวยที่สุด"],3]];
+
+const K={l:0,r:0,j:0};let lv=0,score=0,coins=0,cam=0,t=0,state='menu',cur,P,C,p;
+const show=id=>{document.querySelectorAll('.scr').forEach(e=>e.classList.remove('on'));if(id)$('#'+id).classList.add('on')};
+function load(){cur=LV[lv];P=cur.P;C=cur.C.map(c=>({x:c[0],y:c[1],got:0}));p={x:50,y:340,w:22,h:32,vx:0,vy:0,on:false,face:1,w8:0};cam=0;
+ $('#hl').textContent=`ด่าน ${lv+1}/6`;$('#hs').textContent=`⭐ ${score}/60`;$('#hc').textContent=`🪙 ${coins}`}
+function start(){nm=$('#nm').value.trim()||DEF[ch];lv=0;score=0;coins=0;load();state='play';show(null);$('#hud').classList.add('on');$('#ctl').classList.add('on');seq([523,659,784,1046])}
+
+// controls
+addEventListener('keydown',e=>{const k=e.key;if(k=='ArrowLeft'||k=='a'||k=='A')K.l=1;if(k=='ArrowRight'||k=='d'||k=='D')K.r=1;if(k=='ArrowUp'||k=='w'||k=='W'||k==' ')K.j=1;if([' ','ArrowUp','ArrowDown'].includes(k))e.preventDefault()});
+addEventListener('keyup',e=>{const k=e.key;if(k=='ArrowLeft'||k=='a'||k=='A')K.l=0;if(k=='ArrowRight'||k=='d'||k=='D')K.r=0;if(k=='ArrowUp'||k=='w'||k=='W'||k==' ')K.j=0});
+[['bl','l'],['br','r'],['bj','j']].forEach(([id,k])=>{const b=$('#'+id);
+ const on=e=>{e.preventDefault();K[k]=1;b.classList.add('on')},off=e=>{e.preventDefault();K[k]=0;b.classList.remove('on')};
+ b.addEventListener('pointerdown',on);['pointerup','pointercancel','pointerleave'].forEach(n=>b.addEventListener(n,off));b.addEventListener('contextmenu',e=>e.preventDefault())});
+$('#go').onclick=()=>{show('sel');buildSel()};$('#gs').onclick=start;$('#again').onclick=()=>{$('#win').classList.remove('on');document.querySelectorAll('.fall').forEach(e=>e.remove());start()};
+
+// physics
+function col(ax){for(const r of P){if(p.x<r[0]+r[2]&&p.x+p.w>r[0]&&p.y<r[1]+r[3]&&p.y+p.h>r[1]){
+ if(ax){p.x=p.vx>0?r[0]-p.w:r[0]+r[2]}else if(p.vy>0){p.y=r[1]-p.h;p.vy=0;p.on=true}else{p.y=r[1]+r[3];p.vy=0;beep(150,.08)}}}}
+function step(){
+ const ax=K.r-K.l;p.vx=ax*3.6;if(ax)p.face=ax;
+ if(K.j&&p.on){p.vy=-11.3;p.on=false;beep(500,.16,'square',.05,950)}
+ p.vy=Math.min(p.vy+.55,13);
+ p.x+=p.vx;col(1);p.x=Math.max(0,Math.min(cur.W-p.w,p.x));
+ p.y+=p.vy;p.on=false;col(0);
+ if(ax&&p.on)p.w8+=.25;else if(!ax)p.w8=0;
+ if(p.y>520){p.x=50;p.y=300;p.vy=0;beep(200,.3,'sawtooth',.05,60)}
+ for(const c of C)if(!c.got&&Math.abs(c.x-(p.x+11))<20&&Math.abs(c.y-(p.y+16))<24){c.got=1;coins++;$('#hc').textContent=`🪙 ${coins}`;beep(988,.07,'square',.05);setTimeout(()=>beep(1318,.12),70)}
+ const dx=cur.D;if(p.x+p.w>dx&&p.x<dx+44&&p.y+p.h>336&&p.y<400)openQuiz();
+ cam=Math.max(0,Math.min(cur.W-800,p.x-320));
+}
+
+// quiz
+function openQuiz(){state='quiz';K.l=K.r=K.j=0;const q=QS[lv];let wr=0;seq([392,523,659]);
+ $('#qt').textContent=`ด่าน ${lv+1}: ${q[0]}`;$('#msg').textContent='';const box=$('#qo');box.innerHTML='';
+ q[1].map((o,i)=>[o,i]).sort(()=>Math.random()-.5).forEach(([o,i])=>{const b=document.createElement('button');b.className='opt';b.textContent=o;
+  b.onclick=()=>{if(b.disabled)return;if(i===q[2]){b.classList.add('good');box.querySelectorAll('button').forEach(x=>x.disabled=true);score+=10;$('#hs').textContent=`⭐ ${score}/60`;$('#msg').textContent='ถูกต้อง! +10 คะแนน 💖';seq([659,784,988,1318]);
+    setTimeout(()=>{lv++;if(lv>=6){toLot()}else{load();state='play';show(null)}},1300)}
+   else{b.classList.add('bad');b.disabled=true;wr++;$('#msg').textContent=['ผิดน้า ลองใหม่อีกครั้ง 🥺','ตอบใหม่ที่รัก 💕','คิดก่อนทำสิห้วยยย 😤'][Math.min(wr,3)-1];beep(220,.3,'sawtooth',.05,110)}};
+  box.appendChild(b)});
+ show('quiz')}
+
+// lottery
+function toLot(){state='lot';$('#hud').classList.remove('on');$('#ctl').classList.remove('on');
+ const am=[400,500,555,800,900,1000].sort(()=>Math.random()-.5),gr=$('#grid');gr.innerHTML='';let picked=0;
+ $('#lp').textContent='ผ่านครบ 6 ด่าน คะแนนเต็ม 60! เลือก 1 ใบเลย';
+ am.forEach((a,i)=>{const d=document.createElement('div');d.className='tk';d.innerHTML=`<div class="fr">💖</div><div class="bk">${a}<small>บาท</small></div>`;
+  d.onclick=()=>{if(picked)return;picked=1;beep(400,.4,'triangle',.06,900);d.classList.add('f');$('#lp').textContent='ลุ้นนน... 🥁';
+   setTimeout(()=>{seq([784,988,1175,1568]);$('#lp').textContent=`ได้ ${a} บาท! 🎉`;
+    gr.querySelectorAll('.tk').forEach(x=>{if(x!==d){x.classList.add('f','dim')}})},900);
+   setTimeout(()=>{$('#big').textContent=a+' บาท';$('#wh').textContent=`ยินดีด้วย ${nm}! 🎉`;show('win');confetti()},3200)};
+  gr.appendChild(d)});
+ show('lot')}
+function confetti(){const b=$('#box');for(let i=0;i<30;i++){const e=document.createElement('div');e.className='fall';e.textContent=['💖','⭐','🪙','✨','🎉'][i%5];e.style.left=Math.random()*95+'%';e.style.animationDuration=(2+Math.random()*3)+'s';e.style.animationDelay=Math.random()*2+'s';b.appendChild(e);setTimeout(()=>e.remove(),7000)}}
+
+// characters
+let ch=0,nm='สาวน้อย';const DEF=['สาวน้อย','หนุ่มน้อย','น้องหมา'];
+function drawChar(c,x,y,face,fr,air,ty){
+ const r=(a,b,w,h,col)=>{c.fillStyle=col;c.fillRect(a,b,w,h)};
+ const S='#f0c9a0',W='#fff',H='#2a1c2e';
+ c.save();c.translate(x+11,0);c.scale(face,1);c.translate(-11,0);
+ const legs=(sk,sh,w)=>{if(air){r(4,y+29,5,3,sk);r(14,y+28,5,3,sk);r(3,y+31,6,1,sh);r(14,y+30,6,2,sh)}else if(fr){r(4,y+29,5,3,sk);r(14,y+29,5,3,sk);r(3,y+31,6,1,sh);r(14,y+31,6,1,sh)}else{r(6,y+29,4,3,sk);r(12,y+29,4,3,sk);r(5,y+31,6,1,sh);r(11,y+31,6,1,sh)}};
+ if(ty==0){
+  r(0,y-2,22,10,H);r(2,y-4,18,4,H);r(0,y+8,4,9,H);r(18,y+8,4,9,H);
+  r(4,y+7,14,11,S);r(4,y+6,14,3,H);
+  r(7,y+11,3,3,'#3a2a2a');r(13,y+11,3,3,'#3a2a2a');r(10,y+16,3,1,'#d98a8a');
+  r(3,y+18,16,8,W);r(8,y+18,6,2,'#dfe6f2');r(0,y+19,4,6,W);r(18,y+19,4,6,W);
+  r(0,y+25,3,2,S);r(19,y+25,3,2,S);r(0,y+26,3,1,'#ffb6d9');
+  r(2,y+25,18,4,'#e0343f');legs(S,W)
+ }else if(ty==1){
+  r(3,y-3,16,4,H);r(1,y,20,7,H);r(4,y+7,14,11,S);r(4,y+6,14,2,H);
+  r(7,y+11,3,3,'#3a2a2a');r(13,y+11,3,3,'#3a2a2a');r(9,y+16,5,1,'#d98a8a');
+  r(3,y+18,16,8,'#7ec8ff');r(8,y+18,6,2,'#fff');r(0,y+19,4,6,'#7ec8ff');r(18,y+19,4,6,'#7ec8ff');
+  r(0,y+25,3,2,S);r(19,y+25,3,2,S);
+  r(3,y+25,16,5,'#3a4fa0');legs(S,'#e8e8f0')
+ }else{
+  const B='#c98a4b',D='#8a5a2b',C='#ffe9c9',t=fr?3:0;
+  r(0,y+8-t,3,9,B);r(2,y+12,16,10,B);r(4,y+18,12,4,C);
+  r(14,y+6,10,9,B);r(14,y+3,4,7,D);r(21,y+4,3,6,D);r(21,y+11,5,4,C);r(25,y+11,2,2,'#222');r(19,y+8,2,2,'#222');r(22,y+15,2,3,'#ff7a9a');r(14,y+14,5,2,'#ff5fa8');
+  if(air){r(0,y+22,4,6,B);r(16,y+22,4,6,B);r(0,y+27,5,2,D);r(16,y+27,5,2,D)}
+  else if(fr){r(1,y+22,4,10,B);r(15,y+22,4,10,B);r(0,y+30,6,2,D);r(14,y+30,6,2,D)}
+  else{r(3,y+22,4,10,B);r(13,y+22,4,10,B);r(2,y+30,6,2,D);r(12,y+30,6,2,D)}
+ }
+ c.restore()}
+function buildSel(){document.querySelectorAll('.pick').forEach(el=>{const i=+el.dataset.i,c=el.querySelector('canvas').getContext('2d');c.clearRect(0,0,40,48);drawChar(c,9,8,1,0,false,i);
+ el.onclick=()=>{ch=i;document.querySelectorAll('.pick').forEach(e=>e.classList.toggle('on',e===el));$('#nm').placeholder='ตั้งชื่อ (ว่าง = '+DEF[i]+')';beep(660+i*130,.1)}})}
+
+// drawing
+const R=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),w,h)};
+function draw(){
+ const gr=g.createLinearGradient(0,0,0,450);gr.addColorStop(0,cur.sky[0]);gr.addColorStop(1,cur.sky[1]);g.fillStyle=gr;g.fillRect(0,0,800,450);
+ // hills
+ for(let i=-1;i<6;i++){const x=i*220-(cam*.2)%220;R(x,330,180,120,'#e8d6ff');R(x+30,300,120,40,'#e8d6ff');R(x+60,280,60,30,'#e8d6ff')}
+ // clouds
+ for(let i=0;i<7;i++){const x=((i*260-cam*.4+t*.15)%1800+1800)%1800-200,y=40+(i*53)%110;R(x,y,90,22,'#fff');R(x+14,y-14,50,16,'#fff');R(x+50,y-8,36,12,'#fff');R(x+8,y+22,70,6,'#ffffff99')}
+ // platforms
+ for(const r of P){const x=Math.round(r[0]-cam);if(x>800||x+r[2]<0)continue;
+  R(x,r[1],r[2],r[3],'#d79af0');for(let j=0;j<r[2];j+=16){R(x+j,r[1]+6,16,2,'#b676d8');if(r[3]>20)for(let k=14;k<r[3];k+=16){R(x+j+((k/16)%2?8:0),r[1]+k,2,16,'#b676d8');R(x,r[1]+k+8,r[2],2,'#b676d8')}}
+  R(x,r[1],r[2],7,'#ff7eb6');for(let j=0;j<r[2];j+=8)R(x+j,r[1]+7,4,4,'#ff7eb6');R(x,r[1],r[2],2,'#ffb6d9')}
+ // coins
+ for(const c of C){if(c.got)continue;const w=Math.abs(Math.cos(t*.08+c.x))*10+2,x=c.x-cam;R(x-w,c.y-10,w*2,20,'#ffb800');R(x-w+2,c.y-8,Math.max(0,w*2-4),16,'#ffe14d');R(x-1,c.y-5,2,10,'#ffb800')}
+ // door
+ {const x=cur.D-cam,y=336,gl=Math.sin(t*.1)*2+4;R(x-gl,y-gl,44+gl*2,64+gl,'#ffe14d55');R(x,y,44,64,'#7d5ac9');R(x+4,y+4,36,60,'#a98bf0');R(x+8,y-4,28,8,'#7d5ac9');R(x+14,y-8,16,6,'#7d5ac9');
+  g.fillStyle='#fff4a8';g.font='bold 30px sans-serif';g.textAlign='center';g.fillText('?',x+22,y+42);R(x+32,y+34,4,4,'#ffe14d')}
+ // player
+{const x=Math.round(p.x-cam),y=Math.round(p.y);drawChar(g,x,y,p.face,Math.floor(p.w8)%2,!p.on,ch);
+ g.font='bold 13px Mali,sans-serif';g.textAlign='center';g.lineWidth=3;g.strokeStyle='#5a3d7a';g.fillStyle='#fff';g.strokeText(nm,x+11,y-10);g.fillText(nm,x+11,y-10)}
+}
+let last=0,acc=0;
+function loop(ts){requestAnimationFrame(loop);acc+=Math.min(ts-last,100);last=ts;
+ while(acc>16.6){acc-=16.6;t++;if(state==='play')step()}
+ if(cur)draw();else{g.fillStyle='#ffd6ea';g.fillRect(0,0,800,450)}}
+cur=LV[0];P=cur.P;C=[];p={x:-99,y:0,w:22,h:32,face:1,on:true,w8:0};
+requestAnimationFrame(loop);
+</script></body></html>
